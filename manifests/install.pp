@@ -6,10 +6,10 @@ class nagiosclient::install {
     ensure => $nagiosclient::version,
   }
 
-  @package { 'lm-sensors':
-    ensure => present,
-    tag    => 'physical',
+  if $::is_virtual == 'false' {
+    package { 'lm-sensors':
+      ensure => present,
+      tag    => $physical,
+    }
   }
-
-  Package <| tag == $::virtual |>
 }
