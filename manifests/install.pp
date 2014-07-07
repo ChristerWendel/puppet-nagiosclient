@@ -9,7 +9,7 @@ class nagiosclient::install {
   if $::is_virtual == 'false' {
     package { 'lm-sensors':
       ensure => present,
-      tag    => $physical,
+      tag    => $::physical,
     }
   }
 }

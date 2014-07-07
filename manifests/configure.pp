@@ -3,7 +3,6 @@
 # Configures the nfs server
 class nagiosclient::configure {
   $allowed_hosts = $nagiosclient::allowed_hosts
-  $parameters = $nagiosclient::export_parameters
 
   augeas { 'nrpe.cfg':
     context => '/files/etc/nagios/nrpe.cfg',
