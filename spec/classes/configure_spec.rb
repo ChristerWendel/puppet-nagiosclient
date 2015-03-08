@@ -10,7 +10,7 @@ describe 'nagiosclient', :type => :class do
     }
 
     it { should contain_file('/etc/nagios/nrpe.d/check_nrpe.cfg')
-        .with_content(/check_apt/)
+        .with_content(/check_apt -t 60/)
         .with_content(/check_disk/)
         .with_content(/check_load/)
         .with_content(/check_ups/)
