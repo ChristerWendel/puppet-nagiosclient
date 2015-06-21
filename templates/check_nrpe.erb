@@ -1,7 +1,9 @@
 command[check_apt]     = /usr/lib/nagios/plugins/check_apt -t 60
 command[check_disk]    = /usr/lib/nagios/plugins/check_disk -u GB -w 10% -w 2 -c 5% -c 1 -W 2% -K 1% -p /
 command[check_load]    = /usr/lib/nagios/plugins/check_load -w 5.0,4.0,3.0 -c 10.0,6.0,4.0
-<% if @is_virtual == 'false' -%>
+<% if @lsbdistid == 'Raspbian' -%>
+command[check_sensors] = /usr/lib/nagios/plugins/check_sensors_raspberrypi
+<% elsif @is_virtual == 'false' -%>
 command[check_sensors] = /usr/lib/nagios/plugins/check_sensors
 <% end -%>
 command[check_ups]     = /usr/lib/nagios/plugins/check_ups -u ups

@@ -15,6 +15,10 @@ describe 'nagiosclient', :type => :class do
         .with_content(/check_load/)
         .with_content(/check_ups/)
     }
+
+    it { should_not contain_file('/usr/lib/nagios/plugins/check_sensors_raspberrypi')
+        .with_owner('root')
+    }
   end
 
   context 'allowed_hosts => 192.168.0.0/24' do
@@ -30,6 +34,7 @@ describe 'nagiosclient', :type => :class do
     let(:facts) { {:is_virtual => 'false'} }
 
     it { should contain_file('/etc/nagios/nrpe.d/check_nrpe.cfg')
+        .without_content(/check_sensors_raspberrypi/)
         .with_content(/check_sensors/)
     }
   end
@@ -38,7 +43,21 @@ describe 'nagiosclient', :type => :class do
     let(:facts) { {:is_virtual => 'true'} }
 
     it { should contain_file('/etc/nagios/nrpe.d/check_nrpe.cfg')
+        .without_content(/check_sensors_raspberrypi/)
         .without_content(/check_sensors/)
+    }
+  end
+
+  context 'raspberry pi' do
+    let(:facts) { {:lsbdistid => 'Raspbian'} }
+
+    it { should contain_file('/usr/lib/nagios/plugins/check_sensors_raspberrypi')
+        .with_owner('root')
+        .with_source('puppet:///modules/nagiosclient/check_sensors_raspberrypi')
+    }
+
+    it { should contain_file('/etc/nagios/nrpe.d/check_nrpe.cfg')
+        .with_content(/check_sensors_raspberrypi/)
     }
   end
 end

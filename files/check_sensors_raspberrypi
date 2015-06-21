@@ -1,0 +1,76 @@
+#!/bin/bash
+
+PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin
+
+PROGNAME=`basename $0`
+PROGPATH=`echo $0 | sed -e 's,[\\/][^\\/][^\\/]*$,,'`
+REVISION="1.0"
+
+. $PROGPATH/utils.sh
+
+
+print_usage() {
+	echo "Usage: $PROGNAME" [--ignore-fault]
+}
+
+print_help() {
+	print_revision $PROGNAME $REVISION
+	echo ""
+	print_usage
+	echo ""
+	echo "This plugin checks hardware status using the lm_sensors package."
+	echo ""
+	support
+	exit $STATE_OK
+}
+
+case "$1" in
+	--help)
+		print_help
+		exit $STATE_OK
+		;;
+	-h)
+		print_help
+		exit $STATE_OK
+		;;
+	--version)
+		print_revision $PROGNAME $REVISION
+		exit $STATE_OK
+		;;
+	-V)
+		print_revision $PROGNAME $REVISION
+		exit $STATE_OK
+		;;
+	*)
+		sensordata=`cat /sys/class/thermal/thermal_zone0/temp`
+		let "temp=${sensordata}/1000"
+		check_range ${temp} 70:
+		status=$?
+		if test ${status} -eq 2; then
+			text="SENSORS UNKNOWN - check_range returned error"
+			exit=$STATE_UNKNOWN
+		elif test ${status} -eq 1; then
+			text="CRITICAL - sensors returned ${temp} °C"
+			exit=$STATE_CRITICAL
+		else
+			check_range ${temp} 55:
+			status=$?
+			if test ${status} -eq 2; then
+				text="SENSORS UNKNOWN - check_range returned error"
+				exit=$STATE_UNKNOWN
+			elif test ${status} -eq 1; then
+				text="WARNING - sensors returned ${temp} °C"
+				exit=$STATE_WARNING
+			else
+				text="SENSORS OK - sensors returned ${temp} °C"
+				exit=$STATE_OK
+			fi
+		fi
+
+		echo "$text"
+		if test "$1" = "-v" -o "$1" = "--verbose"; then
+			echo ${sensordata}
+		fi
+		exit $exit
+		;;
+esac

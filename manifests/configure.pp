@@ -16,4 +16,14 @@ class nagiosclient::configure {
     mode    => '0644',
     content => template('nagiosclient/check_nrpe.erb'),
   }
+
+  if $::lsbdistid == 'Raspbian' {
+    file { '/usr/lib/nagios/plugins/check_sensors_raspberrypi':
+      ensure => present,
+      owner  => 'root',
+      group  => 'root',
+      mode   => '0755',
+      source => 'puppet:///modules/nagiosclient/check_sensors_raspberrypi',
+    }
+  }
 }
