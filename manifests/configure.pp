@@ -17,7 +17,7 @@ class nagiosclient::configure {
     content => template('nagiosclient/check_nrpe.erb'),
   }
 
-  if $::lsbdistid == 'Raspbian' {
+  if $::rubyplatform == 'arm-linux-gnueabihf' {
     file { '/usr/lib/nagios/plugins/check_sensors_raspberrypi':
       ensure => present,
       owner  => 'root',

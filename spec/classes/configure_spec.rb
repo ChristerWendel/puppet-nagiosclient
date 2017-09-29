@@ -31,7 +31,7 @@ describe 'nagiosclient', :type => :class do
   end
 
   context 'physical machine' do
-    let(:facts) { {:is_virtual => 'false'} }
+    let(:facts) { {:is_virtual => false} }
 
     it { should contain_file('/etc/nagios/nrpe.d/check_nrpe.cfg')
         .without_content(/check_sensors_raspberrypi/)
@@ -40,7 +40,7 @@ describe 'nagiosclient', :type => :class do
   end
 
   context 'virtual machine' do
-    let(:facts) { {:is_virtual => 'true'} }
+    let(:facts) { {:is_virtual => true} }
 
     it { should contain_file('/etc/nagios/nrpe.d/check_nrpe.cfg')
         .without_content(/check_sensors_raspberrypi/)
@@ -49,7 +49,7 @@ describe 'nagiosclient', :type => :class do
   end
 
   context 'raspberry pi' do
-    let(:facts) { {:lsbdistid => 'Raspbian'} }
+    let(:facts) { {:rubyplatform => 'arm-linux-gnueabihf'} }
 
     it { should contain_file('/usr/lib/nagios/plugins/check_sensors_raspberrypi')
         .with_owner('root')
